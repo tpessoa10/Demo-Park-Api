@@ -1,5 +1,6 @@
 package com.mballen.demo_park_api.config;
 
+import com.mballen.demo_park_api.jwt.JwtAuthenticationEntryPoint;
 import com.mballen.demo_park_api.jwt.JwtAuthorizationFilter;
 import com.mballen.demo_park_api.jwt.JwtUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -38,6 +39,8 @@ public class SpringSecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()))
                 .build();
     }
 
