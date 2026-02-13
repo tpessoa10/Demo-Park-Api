@@ -7,8 +7,11 @@ import com.mballen.demo_park_api.repository.ClienteRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,4 +36,8 @@ public class ClienteService {
                 );
     }
 
+    @Transactional
+    public Page<Cliente> buscarTodos(Pageable pageable) {
+        return clienteRepository.findAll(pageable);
+    }
 }
