@@ -3,12 +3,15 @@ package com.mballen.demo_park_api.web.controller;
 import com.mballen.demo_park_api.entity.Cliente;
 import com.mballen.demo_park_api.jwt.JwtUserDetails;
 import com.mballen.demo_park_api.repository.ClienteRepository;
+import com.mballen.demo_park_api.repository.projection.ClienteProjection;
 import com.mballen.demo_park_api.service.ClienteService;
 import com.mballen.demo_park_api.service.UsuarioService;
 import com.mballen.demo_park_api.web.controller.dto.ClienteCreateDto;
 import com.mballen.demo_park_api.web.controller.dto.ClienteResponseDto;
+import com.mballen.demo_park_api.web.controller.dto.PageableDto;
 import com.mballen.demo_park_api.web.controller.dto.UsuarioResponseDto;
 import com.mballen.demo_park_api.web.controller.dto.mapper.ClienteMapper;
+import com.mballen.demo_park_api.web.controller.dto.mapper.PageableMapper;
 import com.mballen.demo_park_api.web.controller.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -76,8 +79,8 @@ public class ClienteController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<Page<Cliente>> getAll (Pageable pageable){
-        Page<Cliente> clientes = clienteService.buscarTodos(pageable);
-        return ResponseEntity.ok(clientes);
+    public ResponseEntity<PageableDto> getAll (Pageable pageable){
+        Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
+        return ResponseEntity.ok(PageableMapper.toDto(clientes));
     }
 }

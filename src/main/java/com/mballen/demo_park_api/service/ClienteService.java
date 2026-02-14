@@ -4,6 +4,7 @@ import com.mballen.demo_park_api.entity.Cliente;
 import com.mballen.demo_park_api.exception.CpfUniqueViolationException;
 import com.mballen.demo_park_api.exception.EntityNotFoundException;
 import com.mballen.demo_park_api.repository.ClienteRepository;
+import com.mballen.demo_park_api.repository.projection.ClienteProjection;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,7 +38,7 @@ public class ClienteService {
     }
 
     @Transactional
-    public Page<Cliente> buscarTodos(Pageable pageable) {
-        return clienteRepository.findAll(pageable);
+    public Page<ClienteProjection> buscarTodos(Pageable pageable) {
+        return clienteRepository.findAllPageable(pageable);
     }
 }
