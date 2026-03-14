@@ -50,7 +50,9 @@ public class ClienteVaga {
     @ManyToOne
     @JoinColumn(name = "id_cliente", nullable = false)
     private Cliente cliente;
-    @JoinColumn(name = "id_cliente", nullable = false)
+
+    @ManyToOne
+    @JoinColumn(name = "id_vaga", nullable = false)
     private Vaga vaga;
 
     @CreatedDate

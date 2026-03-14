@@ -22,7 +22,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class EstacionamentoController {
 
-    private EstacionamentoService estacionamentoService;
+    private final EstacionamentoService estacionamentoService;
 
     @PostMapping("/check-in")
     @PreAuthorize("hasRole('ADMIN')")
