@@ -1,6 +1,7 @@
 package com.mballen.demo_park_api.web.controller;
 
 import com.mballen.demo_park_api.entity.ClienteVaga;
+import com.mballen.demo_park_api.service.ClienteVagaService;
 import com.mballen.demo_park_api.service.EstacionamentoService;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoCreateDto;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoResponseDto;
@@ -18,10 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -33,6 +31,7 @@ import java.net.URI;
 public class EstacionamentoController {
 
     private final EstacionamentoService estacionamentoService;
+    private final ClienteVagaService clienteVagaService;
 
 
     @Operation(
@@ -94,5 +93,13 @@ public class EstacionamentoController {
         URI location = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{recibo}")
                 .buildAndExpand(clienteVaga.getRecibo()).toUri();
         return ResponseEntity.created(location).body(responseDto);
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN'), 'CLIENTE'")
+    @GetMapping("/check-in/{recibo}")
+    public ResponseEntity<EstacionamentoResponseDto> getByRecibo(@PathVariable String recibo){
+        ClienteVaga clienteVaga = clienteVagaService.buscarPorRecibo(recibo);
+        EstacionamentoResponseDto responseDto = ClienteVagaMapper.toDto(clienteVaga);
+        return ResponseEntity.ok(responseDto);
     }
 }
