@@ -27,7 +27,7 @@ public class EstacionamentoService {
         vaga.setStatus(Vaga.StatusVaga.OCUPADA);
         clienteVaga.setVaga(vaga);
 
-        clienteVaga.setData_entrada(LocalDateTime.now());
+        clienteVaga.setDataEntrada(LocalDateTime.now());
         clienteVaga.setRecibo(EstacionamentoUtils.gerarRecibo());
 
         return clienteVagaService.salvar(clienteVaga);
