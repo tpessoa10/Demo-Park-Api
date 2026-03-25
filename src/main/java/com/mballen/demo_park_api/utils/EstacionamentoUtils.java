@@ -16,35 +16,34 @@ public class EstacionamentoUtils {
     private static final double ADICIONAL_15_MINUTES = 1.75;
 
     public static BigDecimal calcularCusto(LocalDateTime entrada, LocalDateTime saida) {
+
+        if (entrada == null || saida == null || saida.isBefore(entrada)) {
+            throw new IllegalArgumentException("Datas inválidas");
+        }
+
         long minutes = entrada.until(saida, ChronoUnit.MINUTES);
-        double total = 0.0;
+
+        BigDecimal total;
 
         if (minutes <= 15) {
 
-            total = PRIMEIROS_15_MINUTES;
-
-            // complete com a lógica para calcular o custo até 15 minutos de uso
+            total = BigDecimal.valueOf(PRIMEIROS_15_MINUTES);
 
         } else if (minutes <= 60) {
 
-            total = PRIMEIROS_60_MINUTES;
-
-            // complete com a lógica para calcular o custo até os primeiros 60 minutos de uso
+            total = BigDecimal.valueOf(PRIMEIROS_60_MINUTES);
 
         } else {
 
             long minutosExcedentes = minutes - 60;
-
-            // quantidade de blocos de 15 min (arredondando pra cima)
             long faixas = (long) Math.ceil(minutosExcedentes / 15.0);
 
-            total = PRIMEIROS_60_MINUTES + (faixas * ADICIONAL_15_MINUTES);
-
-            // complete com a lógica para calcular o custo acima de 60 minutos de uso
-
+            total = BigDecimal.valueOf(PRIMEIROS_60_MINUTES)
+                    .add(BigDecimal.valueOf(faixas)
+                            .multiply(BigDecimal.valueOf(ADICIONAL_15_MINUTES)));
         }
 
-        return new BigDecimal(total).setScale(2, RoundingMode.HALF_EVEN);
+        return total.setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private static final BigDecimal DESCONTO_PERCENTUAL = new BigDecimal("0.30");
