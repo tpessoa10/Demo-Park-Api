@@ -1,11 +1,14 @@
 package com.mballen.demo_park_api.web.controller;
 
 import com.mballen.demo_park_api.entity.ClienteVaga;
+import com.mballen.demo_park_api.repository.projection.ClienteVagaProjection;
 import com.mballen.demo_park_api.service.ClienteVagaService;
 import com.mballen.demo_park_api.service.EstacionamentoService;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoCreateDto;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoResponseDto;
+import com.mballen.demo_park_api.web.controller.dto.PageableDto;
 import com.mballen.demo_park_api.web.controller.dto.mapper.ClienteVagaMapper;
+import com.mballen.demo_park_api.web.controller.dto.mapper.PageableMapper;
 import com.mballen.demo_park_api.web.controller.exception.ErrorMessage;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -18,6 +21,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -151,5 +157,16 @@ public class EstacionamentoController {
         ClienteVaga clienteVaga = estacionamentoService.checkOut(recibo);
         EstacionamentoResponseDto responseDto = ClienteVagaMapper.toDto(clienteVaga);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/cpf/{cpf}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<PageableDto> getAllEstacionamentosPorCpf(@PathVariable String cpf,
+                                                                   @PageableDefault(size = 5, sort = "dataEntrada",
+                                                                   direction = Sort.Direction.ASC) PageableDto pageable){
+
+        Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
+        PageableDto dto = PageableMapper.toDto(projection);
+        return ResponseEntity.ok(dto);
     }
 }
