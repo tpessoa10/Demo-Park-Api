@@ -8,6 +8,7 @@ import com.mballen.demo_park_api.web.controller.dto.PageableDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -36,7 +37,7 @@ public class ClienteVagaService {
     }
 
     @Transactional
-    public Page<ClienteVagaProjection> buscarTodosPorClienteCpf(String cpf, PageableDto pageable) {
+    public Page<ClienteVagaProjection> buscarTodosPorClienteCpf(String cpf, Pageable pageable) {
         return clienteVagaRepository.findAllByClienteCpf(cpf, pageable);
     }
 }
