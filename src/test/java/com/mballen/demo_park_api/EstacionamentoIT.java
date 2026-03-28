@@ -235,6 +235,38 @@ public class EstacionamentoIT {
                 .jsonPath("method").isEqualTo("GET");
 
     }
+
+    @Test
+    public void buscarEstacionamentosDoClienteLogado_retornarSucesso200(){
+
+        PageableDto responseBody = testClient.get().uri("/api/v1/estacionamentos?size1=page=0")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "bob@email.com.br", "123456"))
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().exists(HttpHeaders.LOCATION)
+                .expectBody(PageableDto.class)
+                .returnResult().getResponseBody();
+
+
+        org.assertj.core.api.Assertions.assertThat(responseBody).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(responseBody.getContent().size()).isEqualTo(1);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getTotalPages()).isEqualTo(2);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getNumber()).isEqualTo(0);
+        org.assertj.core.api.Assertions.assertThat(responseBody.getSize()).isEqualTo(1);
+    }
+
+    @Test
+    public void buscarEstacionamentosDoClienteLogado_comPerfilAdmin_retornarErrorStatus403(){
+
+        testClient.get().uri("/api/v1/estacionamentos/check-in")
+                .headers(JwtAuthentication.getHeaderAuthorization(testClient, "ana@email.com.br", "123456"))
+                .exchange()
+                .expectStatus().isForbidden()
+                .expectBody()
+                .jsonPath("status").isEqualTo("403")
+                .jsonPath("path").isEqualTo("api/v1/estacionamentos")
+                .jsonPath("method").isEqualTo("GET");
+    }
 }
 
 
