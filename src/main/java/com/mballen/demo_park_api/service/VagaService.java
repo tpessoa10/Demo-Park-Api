@@ -3,6 +3,7 @@ package com.mballen.demo_park_api.service;
 import com.mballen.demo_park_api.entity.Vaga;
 import com.mballen.demo_park_api.exception.CodigoUniqueViolationException;
 import com.mballen.demo_park_api.exception.EntityNotFoundException;
+import com.mballen.demo_park_api.exception.VagaDisponivelExcpetion;
 import com.mballen.demo_park_api.repository.VagaRepository;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,21 +23,20 @@ public class VagaService {
         try{
             return vagaRepository.save(vaga);
         } catch (DataIntegrityViolationException ex){
-            throw new CodigoUniqueViolationException(String.format("Vaga %s ja existe", vaga.getCodigo()));
+            throw new CodigoUniqueViolationException("Vaga",  vaga.getCodigo());
         }
     }
 
     @Transactional
-    public Vaga buscarPorCodigo (String codigo){
-        return vagaRepository.findByCodigo(codigo).orElseThrow(
-                () -> new EntityNotFoundException(String.format("Vaga com codigo %s não encontrada", codigo))
-        );
+    public Vaga buscarPorCodigo(String codigo) {
+        return vagaRepository.findByCodigo(codigo)
+                .orElseThrow(() -> new EntityNotFoundException("Vaga", codigo));
     }
 
     @Transactional
     public Vaga buscarPorVagaLivre() {
         return vagaRepository.findFirstByStatus(LIVRE).orElseThrow(
-                () -> new EntityNotFoundException("Nenhuma vaga livre foi encontrada.")
+                () -> new VagaDisponivelExcpetion("Nenhuma vaga livre foi encontrada.")
         );
     }
 }

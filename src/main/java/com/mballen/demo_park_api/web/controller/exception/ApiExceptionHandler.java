@@ -22,6 +22,14 @@ public class ApiExceptionHandler {
 
     private final MessageSource messageSource;
 
+    @ExceptionHandler({CodigoUniqueViolationException.class})
+    public ResponseEntity<ErrorMessage> CodigoUniqueViolationException(CodigoUniqueViolationException ex, HttpServletRequest request) {
+        Object[] params = new Object[]{ex.getRecurso(), ex.getCodigo()};
+        String message = messageSource.getMessage("excpetion.codigoUniqueViolationException", params, request.getLocale());
+        return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.UNPROCESSABLE_ENTITY, message));
+    }
+
     @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorMessage> methodArgumentValidException(MethodArgumentNotValidException ex, HttpServletRequest request,
                                                                      BindingResult result) {
@@ -58,13 +66,22 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<ErrorMessage> EntityNotFoundException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<ErrorMessage> EntityNotFoundException(EntityNotFoundException ex, HttpServletRequest request) {
         log.error("API ERROR:", ex);
+        Object[] params = new Object[]{ex.getRecurso(), ex.getCodigo()};
+        String message = messageSource.getMessage("excpetion.entityNotFoundExcpetion", params, request.getLocale());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
-                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, ex.getMessage()));
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, message));
     }
 
-    @ExceptionHandler({UserNameUniqueVioletionException.class, CpfUniqueViolationException.class, CodigoUniqueViolationException.class})
+    @ExceptionHandler(VagaDisponivelExcpetion.class)
+    public ResponseEntity<ErrorMessage> vagaDisponivelExcpetion(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        String message = messageSource.getMessage("excpetion.vagaDisponivelExcpetion", null, request.getLocale());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, message));
+    }
+
+    @ExceptionHandler({UserNameUniqueVioletionException.class, CpfUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> uniqueViolationException(RuntimeException ex, HttpServletRequest request) {
         log.error("API ERROR:", ex);
         return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON)
