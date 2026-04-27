@@ -74,6 +74,15 @@ public class ApiExceptionHandler {
                 .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, message));
     }
 
+    @ExceptionHandler(ReciboCheckinNotFoundExcpetion.class)
+    public ResponseEntity<ErrorMessage> reciboCheckinNotFoundExcpetion(ReciboCheckinNotFoundExcpetion ex, HttpServletRequest request) {
+        log.error("API ERROR:", ex);
+        Object[] params = new Object[]{ex.getRecibo()};
+        String message = messageSource.getMessage("excpetion.reciboCheckinNotFoundException", params, request.getLocale());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).contentType(MediaType.APPLICATION_JSON)
+                .body(new ErrorMessage(request, HttpStatus.NOT_FOUND, message));
+    }
+
     @ExceptionHandler(VagaDisponivelExcpetion.class)
     public ResponseEntity<ErrorMessage> vagaDisponivelExcpetion(MethodArgumentNotValidException ex, HttpServletRequest request) {
         String message = messageSource.getMessage("excpetion.vagaDisponivelExcpetion", null, request.getLocale());
