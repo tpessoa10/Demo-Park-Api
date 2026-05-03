@@ -13,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j
 public class JwtUtils {
@@ -38,7 +39,7 @@ public class JwtUtils {
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
 
-    public static JwtToken createToken(String username, String role){
+    public static JwtToken createToken(Long id, String username, String role){
         Date issuedAt = new Date();
         Date limit = toExpireDate(issuedAt);
 
@@ -48,7 +49,7 @@ public class JwtUtils {
                 .setIssuedAt(issuedAt)
                 .setExpiration(limit)
                 .signWith(generateKey(), SignatureAlgorithm.HS256)
-                .claim("role", role)
+                .addClaims(Map.of("id", id, "role", role))
                 .compact();
 
         return new JwtToken(token);

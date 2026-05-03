@@ -224,7 +224,9 @@ public class EstacionamentoController {
                                     mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             }
     )
     @GetMapping("/cpf/{cpf}")

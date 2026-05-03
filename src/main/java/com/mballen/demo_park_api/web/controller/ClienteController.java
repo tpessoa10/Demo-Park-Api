@@ -57,6 +57,8 @@ public class ClienteController {
                     @ApiResponse(responseCode = "422", description = "Recurso não processado por dados de entrada inválidos!",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Recurso não permite role ADMIN!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error!",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<ClienteResponseDto> create(@RequestBody @Valid ClienteCreateDto dto,
@@ -77,6 +79,8 @@ public class ClienteController {
                     @ApiResponse(responseCode = "404", description = "Cliente não encontrado.",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "403", description = "Recurso não permitido role CLIENTE!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error!",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             })
     public ResponseEntity<ClienteResponseDto> getById (@PathVariable Long id){
@@ -131,7 +135,9 @@ public class ClienteController {
                                     mediaType = "application/json;charset=UTF-8",
                                     schema = @Schema(implementation = ErrorMessage.class)
                             )
-                    )
+                    ),
+                    @ApiResponse(responseCode = "500", description = "Internal Server Error!",
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class)))
             }
     )
 
