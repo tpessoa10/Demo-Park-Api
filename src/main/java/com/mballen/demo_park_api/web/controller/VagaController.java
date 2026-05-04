@@ -16,9 +16,13 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +31,7 @@ import java.net.URI;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("api/v1/vagas")
+@Validated
 public class VagaController {
 
     private final VagaService vagaService;
@@ -125,7 +130,9 @@ public class VagaController {
     )
     @GetMapping({"/{codigo}"})
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<VagaResponseDto> getByCodigo(@PathVariable String codigo){
+    public ResponseEntity<VagaResponseDto> getByCodigo(@PathVariable @Size(min = 4, max = 4, message = "Código deve ter 4 dígitos" )
+                                                           @Pattern(regexp = "^[A-Z]-\\d{2}$", message = "O código deve ter o formato X-00")
+                                                           @NotBlank(message = "O código deve ser informado") String codigo){
         Vaga vaga = vagaService.buscarPorCodigo(codigo);
         return ResponseEntity.ok(VagaMapper.toDto(vaga));
     }

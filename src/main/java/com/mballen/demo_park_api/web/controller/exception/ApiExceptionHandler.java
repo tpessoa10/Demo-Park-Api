@@ -2,8 +2,11 @@ package com.mballen.demo_park_api.web.controller.exception;
 
 import com.mballen.demo_park_api.exception.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.Response;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.naming.ConfigurationException;
 import java.nio.file.AccessDeniedException;
 
 @Slf4j
@@ -21,6 +25,23 @@ import java.nio.file.AccessDeniedException;
 public class ApiExceptionHandler {
 
     private final MessageSource messageSource;
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<ErrorMessage> constraintViolationException(ConstraintViolationException ex, HttpServletRequest request) {
+        HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY;
+
+        String field = "";
+        String message = "";
+
+        for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+            String path =  violation.getPropertyPath().toString();
+
+            field = path.substring(path.lastIndexOf('.') + 1);
+            message = violation.getMessage();
+        }
+
+        return ResponseEntity.status(status).body(new ErrorMessage(request, status, field, message));
+    }
 
     @ExceptionHandler({CodigoUniqueViolationException.class})
     public ResponseEntity<ErrorMessage> CodigoUniqueViolationException(CodigoUniqueViolationException ex, HttpServletRequest request) {
