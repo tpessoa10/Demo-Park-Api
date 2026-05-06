@@ -9,6 +9,7 @@ import com.mballen.demo_park_api.service.EstacionamentoService;
 import com.mballen.demo_park_api.service.JasperService;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoCreateDto;
 import com.mballen.demo_park_api.web.controller.dto.EstacionamentoResponseDto;
+import com.mballen.demo_park_api.web.controller.dto.PageableClienteVagaDto;
 import com.mballen.demo_park_api.web.controller.dto.PageableDto;
 import com.mballen.demo_park_api.web.controller.dto.mapper.ClienteVagaMapper;
 import com.mballen.demo_park_api.web.controller.dto.mapper.PageableMapper;
@@ -214,7 +215,7 @@ public class EstacionamentoController {
                             description = "Recurso localizado com sucesso",
                             content = @Content(
                                     mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = PageableDto.class)
+                                    schema = @Schema(implementation = PageableClienteVagaDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -231,12 +232,12 @@ public class EstacionamentoController {
     )
     @GetMapping("/cpf/{cpf}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<PageableDto> getAllEstacionamentosPorCpf(@PathVariable String cpf,
+    public ResponseEntity<PageableDto<ClienteVagaProjection>> getAllEstacionamentosPorCpf(@PathVariable String cpf,
                                                                    @PageableDefault(size = 5, sort = "dataEntrada",
                                                                    direction = Sort.Direction.ASC) Pageable pageable){
 
         Page<ClienteVagaProjection> projection = clienteVagaService.buscarTodosPorClienteCpf(cpf, pageable);
-        PageableDto dto = PageableMapper.toDto(projection);
+        PageableDto<ClienteVagaProjection> dto = PageableMapper.toDto(projection);
         return ResponseEntity.ok(dto);
     }
 

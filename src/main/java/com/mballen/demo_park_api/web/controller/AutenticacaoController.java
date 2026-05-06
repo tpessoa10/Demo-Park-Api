@@ -37,7 +37,7 @@ public class AutenticacaoController {
     @Operation(summary = "Autenticar na API", description = "Recurso de autenticação na API",
             responses = {
                     @ApiResponse(responseCode = "200", description = "Autenticação realizada com sucesso e retorno de um Bearer Token!",
-                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = UsuarioResponseDto.class))),
+                            content = @Content(mediaType = "application/json", schema = @Schema(implementation = JwtToken.class))),
                     @ApiResponse(responseCode = "400", description = "Credenciais inválidas!",
                             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorMessage.class))),
                     @ApiResponse(responseCode = "422", description = "Campos inválidos!",
@@ -47,10 +47,6 @@ public class AutenticacaoController {
             })
     @PostMapping("/auth")
     public ResponseEntity<?> autenticar(@RequestBody @Valid UsuarioLoginDto dto, HttpServletRequest request) {
-        // ESTE PRINT TEM QUE APARECER
-        System.out.println(">>> [CONTROLLER] Recebido do Postman:");
-        System.out.println("    Username: [" + dto.getUsername() + "]");
-        System.out.println("    Password: [" + dto.getPassword() + "]");
 
         try {
             UsernamePasswordAuthenticationToken authenticationToken =

@@ -7,9 +7,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class PageableMapper {
+public class PageableMapper<T> {
 
-    public static PageableDto toDto(Page page) {
+    public static <T> PageableDto<T> toDto(Page<T> page) {
         return new ModelMapper().map(page, PageableDto.class);
     }
 }

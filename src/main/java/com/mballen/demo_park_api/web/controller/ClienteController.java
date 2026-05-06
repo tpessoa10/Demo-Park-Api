@@ -6,10 +6,7 @@ import com.mballen.demo_park_api.repository.ClienteRepository;
 import com.mballen.demo_park_api.repository.projection.ClienteProjection;
 import com.mballen.demo_park_api.service.ClienteService;
 import com.mballen.demo_park_api.service.UsuarioService;
-import com.mballen.demo_park_api.web.controller.dto.ClienteCreateDto;
-import com.mballen.demo_park_api.web.controller.dto.ClienteResponseDto;
-import com.mballen.demo_park_api.web.controller.dto.PageableDto;
-import com.mballen.demo_park_api.web.controller.dto.UsuarioResponseDto;
+import com.mballen.demo_park_api.web.controller.dto.*;
 import com.mballen.demo_park_api.web.controller.dto.mapper.ClienteMapper;
 import com.mballen.demo_park_api.web.controller.dto.mapper.PageableMapper;
 import com.mballen.demo_park_api.web.controller.exception.ErrorMessage;
@@ -125,7 +122,7 @@ public class ClienteController {
                             description = "Recurso recuperado com sucesso",
                             content = @Content(
                                     mediaType = "application/json;charset=UTF-8",
-                                    schema = @Schema(implementation = ClienteResponseDto.class)
+                                    schema = @Schema(implementation = PageableClienteDto.class)
                             )
                     ),
                     @ApiResponse(
@@ -144,7 +141,7 @@ public class ClienteController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
-    public ResponseEntity<PageableDto> getAll (@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"})
+    public ResponseEntity<PageableDto<ClienteProjection>> getAll (@Parameter(hidden = true) @PageableDefault(size = 5, sort = {"nome"})
                                                    Pageable pageable){
         Page<ClienteProjection> clientes = clienteService.buscarTodos(pageable);
         return ResponseEntity.ok(PageableMapper.toDto(clientes));
