@@ -1,8 +1,10 @@
 package com.mballen.demo_park_api.service;
 
+import com.mballen.demo_park_api.entity.Cliente;
 import com.mballen.demo_park_api.entity.ClienteVaga;
 import com.mballen.demo_park_api.exception.EntityNotFoundException;
 import com.mballen.demo_park_api.exception.ReciboCheckinNotFoundExcpetion;
+import com.mballen.demo_park_api.jwt.JwtUserDetails;
 import com.mballen.demo_park_api.repository.ClienteVagaRepository;
 import com.mballen.demo_park_api.repository.projection.ClienteVagaProjection;
 import com.mballen.demo_park_api.web.controller.dto.PageableDto;
@@ -10,6 +12,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -25,9 +29,21 @@ public class ClienteVagaService {
 
     @Transactional
     public ClienteVaga buscarPorRecibo(String recibo) {
-        return clienteVagaRepository.findByReciboAndDataSaidaIsNull(recibo).orElseThrow(
+        ClienteVaga cv =  clienteVagaRepository.findByReciboAndDataSaidaIsNull(recibo).orElseThrow(
                 () -> new ReciboCheckinNotFoundExcpetion(recibo)
         );
+
+        JwtUserDetails details = (JwtUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        boolean isAdmin = details.getRole().equals("ROLE_ADMIN");
+
+        boolean isClienteDonoRecibo = cv.getCliente().getUsuario().getUsername().equals(details.getUsername());
+
+        if (!isAdmin && !isClienteDonoRecibo) {
+            throw new AccessDeniedException("Acesso negado, este recibo não pertence a você");
+        }
+
+        return cv;
     };
 
     @Transactional
